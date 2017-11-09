@@ -2,7 +2,7 @@
 
 abstract class Framework {
 
-  private static $allowedControllersAndActions = array(
+  private static $controllersAndActions = array(
     'pages' => ['home', 'error'],
   );
 
@@ -28,8 +28,8 @@ abstract class Framework {
 
   private static function autoload()
   {
-    //spl_autoload_register('autoloadController');
-    //spl_autoload_register('autoloadModel');
+    spl_autoload_register(array(__CLASS__, 'autoloadController'));
+    spl_autoload_register(array(__CLASS__, 'autoloadModel'));
   }
 
   private static function dispatch()
