@@ -1,0 +1,51 @@
+body {
+  width: 1200px;
+  border: 2px solid black;
+  margin: 0px auto;
+}
+
+.create_img {
+  width: 1000px;
+  border: 1px solid green;
+  margin: 5px auto;
+}
+
+.effects {
+  width: 200px;
+  float: right;
+}
+
+.capture_img {
+  width: 600px;
+  border: 1px solid red;
+}
+
+.create_img_containers {
+  border: 1px solid red;
+  margin: 50px;
+}
+
+#canvas {
+  display: none;
+}
+
+.effects h3 {
+  width: 80px;
+  margin: 5px auto;
+}
+
+.effects_img {
+  width: 80px;
+  height: 80px;
+  border: 1px solid black;
+  margin: 10px auto;
+}
+
+.effects_img img {
+  width: 80px;
+  height: 80px;
+}
+
+.active {
+  border: 1px solid red;
+}
