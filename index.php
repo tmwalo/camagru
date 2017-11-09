@@ -7,11 +7,14 @@
   define('APP_PATH', ROOT . 'application' . DS);
   define('CONTROLLER_PATH', APP_PATH . 'controllers' . DS);
   define('MODEL_PATH', APP_PATH . 'models' . DS);
+  define('VIEW_PATH', APP_PATH . 'views' . DS);
   define('CONFIG_PATH', ROOT . 'config' . DS);
   define('FRAMEWORK_PATH', ROOT . 'framework' . DS);
   define('CORE_PATH', FRAMEWORK_PATH . 'core' . DS);
   define('DATABASE_PATH', FRAMEWORK_PATH . 'database' . DS);
   define('INCLUDES_PATH', ROOT . 'includes' . DS);
+  define('INCLUDES_DATABASE', INCLUDES_PATH . 'database' . DS);
+  define('INCLUDES_VIEWS', INCLUDES_PATH . 'views' . DS);
 
   require_once(CONFIG_PATH . 'setup.php');
 
@@ -19,13 +22,3 @@
   Framework::run();
 
 ?>
-<!DOCTYPE html>
-<html>
-  <head>
-    <meta charset="utf-8">
-    <title>test</title>
-  </head>
-  <body>
-    <h1>Camagru</h1>
-  </body>
-</html>

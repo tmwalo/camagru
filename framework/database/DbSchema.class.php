@@ -1,6 +1,6 @@
 <?php
 
-require_once(INCLUDES_PATH . 'connection.inc.php');
+require_once(INCLUDES_DATABASE . 'connection.inc.php');
 
 abstract class DbSchema {
 
