@@ -69,7 +69,7 @@ function takepicture() {
 
   context = canvas.getContext('2d');
   context.drawImage(video, 0, 0, width, height);
-  data = canvas.toDataURL('image/png');
+  data = canvas.toDataURL('image/jpeg');
   hiddenWebcamPic = document.getElementById('hidden_webcam_pic');
   hiddenWebcamPic.value = data;
   takePicForm = document.getElementById('take_pic_form');

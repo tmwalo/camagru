@@ -30,12 +30,12 @@ var uploadForm;
 uploadForm = document.getElementById('upload_img');
 uploadForm.addEventListener('submit', function(e) {
   e.preventDefault();
-  uploadImg('upload_img', uploadForm);
+  uploadImg('effects_img', uploadForm);
 }, false);
 
 var webCamPicForm;
 webCamPicForm = document.getElementById('take_pic_form');
 webCamPicForm.addEventListener('submit', function(e) {
   e.preventDefault();
-  uploadImg('take_pic_form', webCamPicForm);
+  uploadImg('effects_img_webcam', webCamPicForm);
 }, false);
