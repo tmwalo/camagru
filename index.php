@@ -1,6 +1,7 @@
 <?php
 
   define('DEVELOPMENT_ENV', 'true');
+  define('FILE_SIZE_LIMIT', 10000000);
 
   define('DS', DIRECTORY_SEPARATOR);
   define('ROOT', dirname(__FILE__) . DS);
@@ -15,6 +16,7 @@
   define('INCLUDES_PATH', ROOT . 'includes' . DS);
   define('INCLUDES_DATABASE', INCLUDES_PATH . 'database' . DS);
   define('INCLUDES_VIEWS', INCLUDES_PATH . 'views' . DS);
+  define('UPLOADS_PATH', ROOT . 'uploads' . DS);
 
   require_once(CONFIG_PATH . 'setup.php');
 
