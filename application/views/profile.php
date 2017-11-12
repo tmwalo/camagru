@@ -13,8 +13,8 @@
     <h2>Capture Image</h2>
     <div id="effects" class="effects create_img_containers">
       <h3>Effects</h3>
-      <div class="effects_img active">
-        <img src="images/5-2-snapchat-filters-png-image-thumb.png" alt="" />
+      <div class="effects_img">
+        <img src="images/5-2-snapchat-filters-png-image-thumb.png" alt="" class="active" />
       </div>
       <div class="effects_img">
         <img src="images/577bbbba9ccdd155bb555112.png" alt="" />
@@ -41,6 +41,90 @@
       <p>or</p>
       <?php
 
+        function validateUploadPicForm()
+        {
+          $validate_form_name = false;
+          $validate_effects_img = false;
+          $validate_file_upload = false;
+
+          $form_name = $_POST['form'];
+          $effects_img = $_POST['effects_img'];
+          $file_upload = $_FILES['upload_pic'];
+
+          if (!empty($form_name) && ($form_name == "upload_pic_form") )
+            $validate_form_name = true;
+          if (!empty($effects_img) && (file_exists($effects_img) ) )
+            $validate_effects_img = true;
+          if (isset($file_upload) ) {
+            $allowed_mime_types = array('image/jpeg', 'image/pjpeg', 'image/png');
+            $filename = $file_upload["tmp_name"];
+
+            if (file_exists($filename) && (filesize($filename) < FILE_SIZE_LIMIT) ) {
+              $fileinfo = finfo_open(FILEINFO_MIME_TYPE);
+
+              if (in_array(finfo_file($fileinfo, $filename), $allowed_mime_types) )
+                $validate_file_upload = true;
+              finfo_close($fileinfo);
+            }
+          }
+
+          if ($validate_form_name && $validate_effects_img && $validate_file_upload)
+            return (true);
+          else
+            return (false);
+
+        }
+
+        function deleteFile($filename)
+        {
+          if (file_exists($filename) && is_file($filename))
+            unlink($filename);
+        }
+
+        function decodeImgResource($img_resource)
+        {
+          $img_resource = str_replace('data:image/jpeg;base64,', '', $img_resource);
+          $img_resource = str_replace(' ', '+', $img_resource);
+          $img_data = base64_decode($img_resource);
+          return ($img_data);
+        }
+
+        function validateWebcamPicForm()
+        {
+          $validate_form_name = false;
+          $validate_effects_img = false;
+          $validate_file_upload = false;
+
+          $form_name = $_POST['form'];
+          $effects_img = $_POST['effects_img_webcam'];
+          $file_upload_resource = $_POST['webcam_pic'];
+
+          if (!empty($form_name) && ($form_name == "webcam_pic_form") )
+            $validate_form_name = true;
+          if (!empty($effects_img) && (file_exists($effects_img) ) )
+            $validate_effects_img = true;
+          if (!empty($file_upload_resource) ) {
+            $allowed_mime_types = array('image/jpeg', 'image/pjpeg', 'image/png');
+            $img_data = decodeImgResource($file_upload_resource);
+            $filename = UPLOADS_PATH . time() . '.jpeg';
+            $create_img = file_put_contents($filename, $img_data);
+
+            if ($create_img && (filesize($filename) < FILE_SIZE_LIMIT) ) {
+              $fileinfo = finfo_open(FILEINFO_MIME_TYPE);
+
+              if (in_array(finfo_file($fileinfo, $filename), $allowed_mime_types) )
+                $validate_file_upload = true;
+              finfo_close($fileinfo);
+            }
+          }
+
+          if ($validate_form_name && $validate_effects_img && $validate_file_upload)
+            return (true);
+          else
+            return (false);
+
+        }
+
         if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
           if (isset($_POST['form'])) {
@@ -48,58 +132,28 @@
             $form = $_POST['form'];
 
             if ($form == 'upload_pic_form') {
+              $file_upload = $_FILES['upload_pic'];
+              $src = $file_upload['tmp_name'];
+              $dest = UPLOADS_PATH . $file_upload['name'];
+              $file = $dest;
 
-              $not_empty = false;
-              $exists = false;
-              $size = false;
-              $type = false;
-              $uploaded = false;
+              if (validateUploadPicForm() && move_uploaded_file($src, $dest) )
+                $uploaded = true;
+              else
+                $uploaded = false;
 
-              $upload = $_FILES['upload_pic'];
-              if (isset($upload))
-                $not_empty = true;
-              $filename = $upload['tmp_name'];
-              if (file_exists($filename))
-                $exists = true;
-              $max_size = 10000000;
-              $actual_size = $upload['size'];
-              if ($actual_size < $max_size)
-                $size = true;
-              $allowed = array('image/jpeg', 'image/pjpeg', 'image/png');
-              $fileinfo = finfo_open(FILEINFO_MIME_TYPE);
-              if (in_array(finfo_file($fileinfo, $filename), $allowed))
-                $type = true;
-              finfo_close($fileinfo);
-
-              if ($not_empty && $exists && $size && $type) {
-
-                $file = "uploads/{$upload['name']}";
-                if (move_uploaded_file($filename, $file))
-                  $uploaded = true;
-
-              }
-
-              if (file_exists($filename) && is_file($filename))
-                unlink($filename);
+              deleteFile($src);
 
               $effects_img = $_POST['effects_img'];
 
             }
 
             if ($form == 'webcam_pic_form') {
-              $upload_dir = "uploads/";
-              $img = $_POST['webcam_pic'];
-              $img = str_replace('data:image/jpeg;base64,', '', $img);
-              $img = str_replace(' ', '+', $img);
-              $data = base64_decode($img);
-              $file = $upload_dir . time() . ".jpeg";
-              $uploaded = file_put_contents($file, $data);
-              if ($uploaded === false) {
-                echo "File upload failed big time.";
-              }
-              else {
-                echo "File upload succeeded.";
-              }
+
+              if (validateWebcamPicForm() )
+                $uploaded = true;
+              else
+                $uploaded = false;
 
               $effects_img = $_POST['effects_img_webcam'];
             }
@@ -131,6 +185,8 @@
               imagedestroy($src);
               imagedestroy($dest);
 
+              deleteFile($file);
+
             }
 
           }
@@ -142,12 +198,14 @@
         <?php
           if (isset($uploaded) && $uploaded)
             echo "<p>File successfully uploaded.</p>";
+          elseif (isset($uploaded) && ($uploaded === false) )
+            echo "<p>File upload failed.</p>";
           else
             echo "";
           $uploaded = false;
         ?>
         <input type="hidden" name="form" value="upload_pic_form">
-        <input type="hidden" name="MAX_FILE_SIZE" value="10000000">
+        <input type="hidden" name="MAX_FILE_SIZE" value="<?php echo FILE_SIZE_LIMIT; ?>">
         <p>Upload image 10Mb or less</p>
         <label>
           Pic <input type="file" name="upload_pic" />
