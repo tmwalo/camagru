@@ -31,11 +31,11 @@
     </div>
     <div class="capture_img create_img_containers">
       <video id="video">Video stream not available.</video>
-      <button id="take_pic_btn">Take Pic</button>
       <form id="take_pic_form" action="" method="post">
         <input type="hidden" name="form" value="webcam_pic_form">
         <input id="effects_img_webcam" type="hidden" name="effects_img_webcam" value="" />
         <input id="hidden_webcam_pic"type="hidden" name="webcam_pic">
+        <input type="submit" value="Take Pic">
       </form>
       <canvas id="canvas"></canvas>
       <p>or</p>
@@ -106,7 +106,7 @@
           if (!empty($file_upload_resource) ) {
             $allowed_mime_types = array('image/jpeg', 'image/pjpeg', 'image/png');
             $img_data = decodeImgResource($file_upload_resource);
-            $filename = UPLOADS_PATH . time() . '.jpeg';
+            $filename = UPLOADS_PATH . time() . '.jpg';
             $create_img = file_put_contents($filename, $img_data);
 
             if ($create_img && (filesize($filename) < FILE_SIZE_LIMIT) ) {
@@ -119,10 +119,28 @@
           }
 
           if ($validate_form_name && $validate_effects_img && $validate_file_upload)
-            return (true);
+            return ($filename);
           else
             return (false);
 
+        }
+
+        function mergeImages($src, $dest)
+        {
+          $src_resource = imagecreatefrompng($src);
+          $dest_resource = imagecreatefromjpeg($dest);
+          $src_resource_width = imagesx($src_resource);
+          $src_resource_height = imagesy($src_resource);
+
+          if (imagecopy($dest_resource, $src_resource, 0, 0, 0, 0, $src_resource_width, $src_resource_height) )
+            imagejpeg($dest_resource, UPLOADS_PATH . "merged" . time() . ".jpg");
+          else
+            echo "Image merging failed.\n";
+
+          imagedestroy($src_resource);
+          imagedestroy($dest_resource);
+
+          deleteFile($dest);
         }
 
         if ($_SERVER['REQUEST_METHOD'] == 'POST') {
@@ -134,6 +152,7 @@
             if ($form == 'upload_pic_form') {
               $file_upload = $_FILES['upload_pic'];
               $src = $file_upload['tmp_name'];
+              $effects_img = $_POST['effects_img'];
               $dest = UPLOADS_PATH . $file_upload['name'];
               $file = $dest;
 
@@ -143,50 +162,22 @@
                 $uploaded = false;
 
               deleteFile($src);
-
-              $effects_img = $_POST['effects_img'];
-
             }
 
             if ($form == 'webcam_pic_form') {
+              $effects_img = $_POST['effects_img_webcam'];
 
-              if (validateWebcamPicForm() )
+              $file = validateWebcamPicForm();
+              if ($file)
                 $uploaded = true;
               else
                 $uploaded = false;
-
-              $effects_img = $_POST['effects_img_webcam'];
             }
 
-            /* Merge Images */
-
-            if ($uploaded) {
-
-              echo "Merge Images\n";
-
-              $src = $effects_img;
-              $dest = $file;
-              echo "src: $src\n";
-              echo "dest: $dest\n";
-              $src = imagecreatefrompng($effects_img);
-              $dest = imagecreatefromjpeg($file);
-              echo "src after resource creation: $src\n";
-              echo "dest after resource creation: $dest\n";
-              $src_width = imagesx($src);
-              $src_height = imagesy($src);
-
-              if (imagecopy($dest, $src, 0, 0, 0, 0, $src_width, $src_height)) {
-                imagejpeg($dest, "uploads/merge" . time() . ".jpg");
-              }
-              else {
-                echo "Image merging failed.\n";
-              }
-
-              imagedestroy($src);
-              imagedestroy($dest);
-
+            if ($uploaded)
+            {
+              mergeImages($effects_img, $file);
               deleteFile($file);
-
             }
 
           }

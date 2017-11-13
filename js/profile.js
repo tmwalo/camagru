@@ -1,7 +1,6 @@
 var video;
 var canvas;
 var test_img;
-var take_pic_btn;
 var width;
 var height;
 
@@ -72,13 +71,5 @@ function takepicture() {
   data = canvas.toDataURL('image/jpeg');
   hiddenWebcamPic = document.getElementById('hidden_webcam_pic');
   hiddenWebcamPic.value = data;
-  takePicForm = document.getElementById('take_pic_form');
-  takePicForm.submit();
   test_img.setAttribute('src', data);
 }
-
-take_pic_btn.addEventListener('click', function(e) {
-  e.preventDefault();
-  clearImage();
-  takepicture();
-});

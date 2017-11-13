@@ -16,6 +16,8 @@ function uploadImg(hiddenFormId, form) {
   var imgSrc;
   var hiddenInput;
 
+  console.log("Call uploadImg()");
+
   if (checkImgSelected()) {
     activeImg = document.querySelector('.active');
     imgSrc = activeImg.getAttribute('src');
@@ -37,5 +39,6 @@ var webCamPicForm;
 webCamPicForm = document.getElementById('take_pic_form');
 webCamPicForm.addEventListener('submit', function(e) {
   e.preventDefault();
+  takepicture();
   uploadImg('effects_img_webcam', webCamPicForm);
 }, false);
