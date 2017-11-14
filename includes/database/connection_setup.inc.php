@@ -1,6 +1,6 @@
 <?php
 
-class Db {
+class DbSetup {
 
   private static $instance = NULL;
 
@@ -13,7 +13,7 @@ class Db {
       require_once(CONFIG_PATH . 'database.php');
       $DB_INIT_DSN = "mysql:host=localhost";
       try {
-        self::$instance = new PDO($DB_DSN, $DB_USER, $DB_PASSWORD);
+        self::$instance = new PDO($DB_INIT_DSN, $DB_USER, $DB_PASSWORD);
         self::$instance->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
       } catch (PDOException $e) {
         echo "Database connection failed: " . $e->getMessage() . "<br />";

@@ -1,6 +1,6 @@
 <?php
 
-require_once(INCLUDES_DATABASE . 'connection.inc.php');
+require_once(INCLUDES_DATABASE . 'connection_setup.inc.php');
 
 abstract class DbSchema {
 
@@ -83,7 +83,7 @@ abstract class DbSchema {
 
     public static function createDatabase()
     {
-      $db = Db::getInstance();
+      $db = DbSetup::getInstance();
 
       self::createDatabaseCamagru($db);
       self::useDatabaseCamagru($db);
