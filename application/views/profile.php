@@ -239,7 +239,7 @@
 //        require(INCLUDES_DATABASE . "connection.inc.php");
 
         $pdo = Db::getInstance();
-        $sql = "SELECT * FROM images WHERE user_id = ?";
+        $sql = "SELECT * FROM images WHERE user_id = ? ORDER BY upload_date DESC";
         $stmt = $pdo->prepare($sql);
         $user_id = 1;
         $stmt->bindValue(1, $user_id, PDO::PARAM_INT);
