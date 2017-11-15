@@ -234,6 +234,23 @@
     <h2>My Pictures</h2>
     <div class="personal_gallery_pictures">
       <img id="test_img" />
+      <?php
+//        require(INCLUDES_DATABASE . "connection.inc.php");
+
+        $pdo = Db::getInstance();
+        $sql = "SELECT * FROM images WHERE user_id = ?";
+        $stmt = $pdo->prepare($sql);
+        $user_id = 1;
+        $stmt->bindValue(1, $user_id, PDO::PARAM_INT);
+        $stmt->execute();
+        while ($row = $stmt->fetch() ) {
+          echo "<div class=\"profile_gallery_img\">
+                  <img src=\"uploads/" . $row['filename'] . "\" alt=\"\" />
+                </div>";
+        }
+
+        $pdo = NULL;
+      ?>
     </div>
   </div>
 </div>

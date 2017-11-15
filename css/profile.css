@@ -47,5 +47,17 @@ body {
 }
 
 .active {
-  border: 1px solid red;
+  border: 2px solid red;
+}
+
+.profile_gallery_img {
+  width: 100px;
+  height: 100px;
+  display: inline-block;
+  margin: 10px;
+}
+
+.profile_gallery_img img {
+  width: 100px;
+  height: 100px;
 }
