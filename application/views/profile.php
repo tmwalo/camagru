@@ -131,9 +131,11 @@
           $dest_resource = imagecreatefromjpeg($dest);
           $src_resource_width = imagesx($src_resource);
           $src_resource_height = imagesy($src_resource);
+          $merged_img_name = "merged" . time() . ".jpg";
+          $merged_img = UPLOADS_PATH . $merged_img_name;
 
           if (imagecopy($dest_resource, $src_resource, 0, 0, 0, 0, $src_resource_width, $src_resource_height) )
-            imagejpeg($dest_resource, UPLOADS_PATH . "merged" . time() . ".jpg");
+            imagejpeg($dest_resource, $merged_img);
           else
             echo "Image merging failed.\n";
 
@@ -141,6 +143,8 @@
           imagedestroy($dest_resource);
 
           deleteFile($dest);
+
+          return ($merged_img_name);
         }
 
         if ($_SERVER['REQUEST_METHOD'] == 'POST') {
@@ -176,8 +180,28 @@
 
             if ($uploaded)
             {
-              mergeImages($effects_img, $file);
+              $merged_img = mergeImages($effects_img, $file);
+              echo "$merged_img\n";
               deleteFile($file);
+
+              require_once(INCLUDES_DATABASE . "connection.inc.php");
+
+              $pdo = Db::getInstance();
+              $sql = "INSERT INTO images (user_id, filename, upload_date) VALUES (?, ?, UTC_TIMESTAMP() )";
+              $stmt = $pdo->prepare($sql);
+              $user_id = 1;
+              $stmt->bindValue(1, $user_id, PDO::PARAM_INT);
+              $stmt->bindValue(2, $merged_img, PDO::PARAM_STR);
+              $stmt->execute();
+              if ($stmt->rowCount() == 1) {
+                echo "Image successfully stored.";
+              }
+              else {
+                echo "Image storage failed.";
+                deleteFile($merged_img);
+              }
+
+              $pdo = NULL;
             }
 
           }

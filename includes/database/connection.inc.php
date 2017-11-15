@@ -10,8 +10,7 @@ class Db {
 
   public static function getInstance() {
     if (!isset(self::$instance)) {
-      require_once(CONFIG_PATH . 'database.php');
-      $DB_INIT_DSN = "mysql:host=localhost";
+      require(CONFIG_PATH . 'database.php');
       try {
         self::$instance = new PDO($DB_DSN, $DB_USER, $DB_PASSWORD);
         self::$instance->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
