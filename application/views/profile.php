@@ -201,6 +201,7 @@
                 deleteFile($merged_img);
               }
 
+              $stmt = NULL;
               $pdo = NULL;
             }
 
@@ -246,9 +247,13 @@
         while ($row = $stmt->fetch() ) {
           echo "<div class=\"profile_gallery_img\">
                   <img src=\"uploads/" . $row['filename'] . "\" alt=\"\" />
+                  <div>
+                    <a href=\"?controller=profile&action=deleteImage&image_id=" . $row['image_id'] . "\">Delete</a>
+                  </div>
                 </div>";
         }
 
+        $stmt = NULL;
         $pdo = NULL;
       ?>
     </div>

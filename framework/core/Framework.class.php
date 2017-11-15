@@ -4,7 +4,7 @@ abstract class Framework {
 
   private static $controllersAndActions = array(
     'pages' => ['home', 'error'],
-    'profile' => ['load'],
+    'profile' => ['load', 'deleteImage'],
   );
 
   private static function setErrorReporting()
