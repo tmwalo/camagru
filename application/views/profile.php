@@ -108,7 +108,8 @@
                 require_once(MODEL_PATH . "Image.class.php");
 
                 $pdo = Db::getInstance();
-                $result = Image::insert($pdo, 1, $merged_img);
+                $user_id = 1;
+                $result = Image::insert($pdo, $user_id, $merged_img);
                 if ($result)
                   echo "Image successfully stored." . PHP_EOL;
                 else {
@@ -157,13 +158,11 @@
 //        require(INCLUDES_DATABASE . "connection.inc.php");
 
         $pdo = Db::getInstance();
-        $sql = "SELECT * FROM images WHERE user_id = ? ORDER BY upload_date DESC";
-        $stmt = $pdo->prepare($sql);
         $user_id = 1;
-        $stmt->bindValue(1, $user_id, PDO::PARAM_INT);
-        $result = $stmt->execute();
+        $result = Image::findAll($pdo, $user_id);
         if ($result) {
 
+          $stmt = $result;
           while ($row = $stmt->fetch() ) {
             echo "<div class=\"profile_gallery_img\">
                     <img src=\"uploads/" . $row['filename'] . "\" alt=\"\" />
