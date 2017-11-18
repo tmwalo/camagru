@@ -2,6 +2,8 @@
 
   require_once(INCLUDES_DATABASE . "connection.inc.php");
 
+  require_once(MODEL_PATH . "Image.class.php");
+
   class ProfileController extends BaseController {
 
     public function load()
@@ -16,31 +18,30 @@
       if (!empty($image_id) ) {
         $pdo = Db::getInstance();
 
-        $sql_filename = "SELECT * FROM images WHERE image_id = ?";
-        $stmt_filename = $pdo->prepare($sql_filename);
-        $stmt_filename->bindValue(1, $image_id, PDO::PARAM_INT);
-        $stmt_filename->execute();
-        if ($row = $stmt_filename->fetch() ) {
-
+        $result = Image::find($pdo, $image_id);
+        if ($result) {
+          $row = $result;
+          $uploader_user_id = $row['user_id'];
+          $logged_in_user_id = 1;
           $filename = UPLOADS_PATH . $row['filename'];
-          $sql = "DELETE FROM images WHERE image_id = ? LIMIT 1";
-          $stmt = $pdo->prepare($sql);
-          $stmt->bindValue(1, $image_id, PDO::PARAM_INT);
-          $stmt->execute();
-          if ($stmt->rowCount() == 1) {
-            if (file_exists($filename) && is_file($filename))
-              unlink($filename);
-            echo "Image successfully deleted." . PHP_EOL;
+          if ($logged_in_user_id == $uploader_user_id) {
+            $delete_result = Image::delete($pdo, $image_id);
+            if ($delete_result)
+            {
+              if (file_exists($filename) && is_file($filename))
+                unlink($filename);
+              echo "Image successfully deleted." . PHP_EOL;
+            }
+            else
+              echo "Image could not be deleted." . PHP_EOL;
           }
-          else {
-            echo "Image could not be deleted." . PHP_EOL;
-          }
-
-          $stmt = NULL;
-          $pdo = NULL;
-
+          else
+            echo "Permission denied." . PHP_EOL;
         }
+        else
+          echo "Image not found." . PHP_EOL;
 
+        $pdo = NULL;
       }
 
       $title = "Profile";
