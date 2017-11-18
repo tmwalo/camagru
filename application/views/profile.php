@@ -105,37 +105,21 @@
               if ($merged_img) {
 
                 require_once(INCLUDES_DATABASE . "connection.inc.php");
+                require_once(MODEL_PATH . "Image.class.php");
 
                 $pdo = Db::getInstance();
-                $sql = "INSERT INTO images (user_id, filename, upload_date) VALUES (?, ?, UTC_TIMESTAMP() )";
-                $stmt = $pdo->prepare($sql);
-                $user_id = 1;
-                $stmt->bindValue(1, $user_id, PDO::PARAM_INT);
-                $stmt->bindValue(2, $merged_img, PDO::PARAM_STR);
-                $result = $stmt->execute();
-                if ($result) {
-
-                  if ($stmt->rowCount() == 1) {
-                    echo "Image successfully stored." . PHP_EOL;
-                  }
-                  else {
-                    echo "Image storage failed." . PHP_EOL;
-                    deleteFile($merged_img);
-                  }
-
-                }
+                $result = Image::insert($pdo, 1, $merged_img);
+                if ($result)
+                  echo "Image successfully stored." . PHP_EOL;
                 else {
-                  echo "Image storage failed." . PHP_EOL;
                   deleteFile($merged_img);
+                  echo "Image storage failed." . PHP_EOL;
                 }
-
-                $stmt = NULL;
                 $pdo = NULL;
 
               }
-              else {
+              else
                 echo "Image merge failed." . PHP_EOL;
-              }
 
             }
 
