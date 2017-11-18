@@ -41,149 +41,63 @@
       <p>or</p>
       <?php
 
-        function validateUploadPicForm()
-        {
-          $validate_form_name = false;
-          $validate_effects_img = false;
-          $validate_file_upload = false;
-
-          $form_name = $_POST['form'];
-          $effects_img = $_POST['effects_img'];
-          $file_upload = $_FILES['upload_pic'];
-
-          if (!empty($form_name) && ($form_name == "upload_pic_form") )
-            $validate_form_name = true;
-          if (!empty($effects_img) && (file_exists($effects_img) ) )
-            $validate_effects_img = true;
-          if (isset($file_upload) ) {
-            $allowed_mime_types = array('image/jpeg', 'image/pjpeg', 'image/png');
-            $filename = $file_upload["tmp_name"];
-
-            if (file_exists($filename) && (filesize($filename) < FILE_SIZE_LIMIT) ) {
-              $fileinfo = finfo_open(FILEINFO_MIME_TYPE);
-
-              if (in_array(finfo_file($fileinfo, $filename), $allowed_mime_types) )
-                $validate_file_upload = true;
-              finfo_close($fileinfo);
-            }
-          }
-
-          if ($validate_form_name && $validate_effects_img && $validate_file_upload)
-            return (true);
-          else
-            return (false);
-
-        }
-
-        function deleteFile($filename)
-        {
-          if (file_exists($filename) && is_file($filename))
-            unlink($filename);
-        }
-
-        function decodeImgResource($img_resource)
-        {
-          $img_resource = str_replace('data:image/jpeg;base64,', '', $img_resource);
-          $img_resource = str_replace(' ', '+', $img_resource);
-          $img_data = base64_decode($img_resource);
-          return ($img_data);
-        }
-
-        function validateWebcamPicForm()
-        {
-          $validate_form_name = false;
-          $validate_effects_img = false;
-          $validate_file_upload = false;
-
-          $form_name = $_POST['form'];
-          $effects_img = $_POST['effects_img_webcam'];
-          $file_upload_resource = $_POST['webcam_pic'];
-
-          if (!empty($form_name) && ($form_name == "webcam_pic_form") )
-            $validate_form_name = true;
-          if (!empty($effects_img) && (file_exists($effects_img) ) )
-            $validate_effects_img = true;
-          if (!empty($file_upload_resource) ) {
-            $allowed_mime_types = array('image/jpeg', 'image/pjpeg', 'image/png');
-            $img_data = decodeImgResource($file_upload_resource);
-            $filename = UPLOADS_PATH . time() . '.jpg';
-            $create_img = file_put_contents($filename, $img_data);
-
-            if ($create_img && (filesize($filename) < FILE_SIZE_LIMIT) ) {
-              $fileinfo = finfo_open(FILEINFO_MIME_TYPE);
-
-              if (in_array(finfo_file($fileinfo, $filename), $allowed_mime_types) )
-                $validate_file_upload = true;
-              finfo_close($fileinfo);
-            }
-          }
-
-          if ($validate_form_name && $validate_effects_img && $validate_file_upload)
-            return ($filename);
-          else
-            return (false);
-
-        }
-
-        function mergeImages($src, $dest)
-        {
-          $merge_success = false;
-          $src_resource = imagecreatefrompng($src);
-          $dest_resource = imagecreatefromjpeg($dest);
-          $src_resource_width = imagesx($src_resource);
-          $src_resource_height = imagesy($src_resource);
-          $merged_img_name = "merged" . time() . ".jpg";
-          $merged_img = UPLOADS_PATH . $merged_img_name;
-
-          if (imagecopy($dest_resource, $src_resource, 0, 0, 0, 0, $src_resource_width, $src_resource_height) && imagejpeg($dest_resource, $merged_img) )
-          {
-            $merge_success = true;
-            echo "Image successfully merged." . PHP_EOL;
-          }
-          else
-            echo "Image merging failed." . PHP_EOL;
-
-          imagedestroy($src_resource);
-          imagedestroy($dest_resource);
-
-          deleteFile($dest);
-
-          if ($merge_success)
-            return ($merged_img_name);
-          else
-            return (false);
-        }
-
         if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+
+          echo "Begin form handling!" . PHP_EOL;
 
           if (isset($_POST['form'])) {
 
             $form = $_POST['form'];
 
             if ($form == 'upload_pic_form') {
+
+              echo "Handle upload pic form." . PHP_EOL;
+
               $file_upload = $_FILES['upload_pic'];
               $src = $file_upload['tmp_name'];
               $effects_img = $_POST['effects_img'];
               $dest = UPLOADS_PATH . $file_upload['name'];
               $file = $dest;
 
-              if (validateUploadPicForm() && move_uploaded_file($src, $dest) )
+              echo "Before instantiating MergeUploadImg class." . PHP_EOL;
+
+              require_once(MODEL_PATH . 'MergeImages.class.php');
+              require_once(MODEL_PATH . 'MergeUploadImg.class.php');
+
+              $image_handler = new MergeUploadImg();
+
+              echo "After instantiating MergeUploadImg class." . PHP_EOL;
+
+              if ($image_handler->validateForm() && move_uploaded_file($src, $dest) )
                 $uploaded = true;
               else
                 $uploaded = false;
 
-              deleteFile($src);
+              $image_handler->deleteFile($src);
             }
 
             if ($form == 'webcam_pic_form') {
               $effects_img = $_POST['effects_img_webcam'];
 
-              $file = validateWebcamPicForm();
+              echo "Before instantiating MergeWebcamImg class." . PHP_EOL;
+
+              require_once(MODEL_PATH . 'MergeImages.class.php');
+              require_once(MODEL_PATH . 'MergeWebcamImg.class.php');
+
+              $image_handler = new MergeWebcamImg();
+
+              echo "After instantiating MergeWebcamImg class." . PHP_EOL;
+
+              $file = $image_handler->validateForm();
+              echo "file: ";
+              var_dump($file);
               if ($file)
                 $uploaded = true;
               else
                 $uploaded = false;
             }
+
+            /*
 
             if ($uploaded)
             {
@@ -226,6 +140,8 @@
               }
 
             }
+
+            */
 
           }
 
