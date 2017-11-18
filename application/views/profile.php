@@ -97,11 +97,9 @@
                 $uploaded = false;
             }
 
-            /*
-
             if ($uploaded)
             {
-              $merged_img = mergeImages($effects_img, $file);
+              $merged_img = $image_handler->mergeImages($effects_img, $file);
               echo "$merged_img" . PHP_EOL;
 
               if ($merged_img) {
@@ -140,8 +138,6 @@
               }
 
             }
-
-            */
 
           }
 
