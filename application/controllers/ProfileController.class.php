@@ -2,7 +2,7 @@
 
   require_once(INCLUDES_DATABASE . "connection.inc.php");
 
-  class ProfileController {
+  class ProfileController extends BaseController {
 
     public function load()
     {
@@ -30,10 +30,10 @@
           if ($stmt->rowCount() == 1) {
             if (file_exists($filename) && is_file($filename))
               unlink($filename);
-            echo "Image successfully delted.\n";
+            echo "Image successfully deleted." . PHP_EOL;
           }
           else {
-            echo "Image could not be deleted.";
+            echo "Image could not be deleted." . PHP_EOL;
           }
 
           $stmt = NULL;
