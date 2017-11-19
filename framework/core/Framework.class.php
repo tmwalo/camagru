@@ -4,6 +4,7 @@ abstract class Framework {
 
   private static $controllersAndActions = array(
     'pages' => ['home', 'error'],
+    'image' => ['show'],
     'profile' => ['load', 'deleteImage'],
   );
 
