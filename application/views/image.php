@@ -36,7 +36,18 @@
   <h2>Comments:</h2>
   <div>
     <div>
+    <?php
 
+      require_once(MODEL_PATH . "Comment.class.php");
+
+      $result_show_comments = Comment::findAll($pdo, $row['image_id']);
+      if ($result_show_comments) {
+        while ($row_show_comment = $result_show_comments->fetch() ) {
+          echo "<div>" . $row_show_comment['comment'] . "</div>";
+        }
+      }
+
+    ?>
     </div>
     <div class="comment_form">
       <h3>Post Comment:</h3>
