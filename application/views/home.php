@@ -45,7 +45,9 @@
     $stmt = $result;
     while ($row = $stmt->fetch() ) {
       echo "<div class=\"gallery_img\">
-              <img src=\"uploads/" . $row['filename'] . "\" alt=\"\" />
+              <a href=\"image.php?controller=image&action=show&img=" . $row['image_id'] . "\">
+                <img src=\"uploads/" . $row['filename'] . "\" alt=\"\" />
+              </a>
             </div>";
     }
   }

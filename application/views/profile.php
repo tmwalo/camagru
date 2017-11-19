@@ -165,19 +165,21 @@
           $stmt = $result;
           while ($row = $stmt->fetch() ) {
             echo "<div class=\"profile_gallery_img\">
-                    <img src=\"uploads/" . $row['filename'] . "\" alt=\"\" />
+                    <a href=\"image.php?controller=image&action=show&img=" . $row['image_id'] . "\">
+                      <img src=\"uploads/" . $row['filename'] . "\" alt=\"\" />
+                    </a>
                     <div>
                       <a href=\"?controller=profile&action=deleteImage&image_id=" . $row['image_id'] . "\">Delete</a>
                     </div>
                   </div>";
           }
+          $stmt = NULL;
 
         }
         else {
           echo "Image gallery could not be loaded." . PHP_EOL;
         }
 
-        $stmt = NULL;
         $pdo = NULL;
       ?>
     </div>
