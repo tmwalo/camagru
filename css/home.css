@@ -1,0 +1,11 @@
+.gallery_img {
+  width: 200px;
+  height: 200px;
+  display: inline-block;
+  margin: 10px;
+}
+
+.gallery_img img {
+  width: 200px;
+  height: 200px;
+}
