@@ -40,9 +40,6 @@
   $row = NULL;
 
   $order_by = "upload_date DESC";
-  var_dump($order_by);
-  var_dump($start_index);
-  var_dump($records_per_page);
   $result = Image::findRange($pdo, $order_by, $start_index, $records_per_page);
   if ($result) {
     $stmt = $result;
